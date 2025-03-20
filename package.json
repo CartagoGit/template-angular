@@ -1,0 +1,39 @@
+{
+	"name": "my-home-price-app",
+	"version": "0.0.1",
+	"author": "Cartago",
+	"homepage": "https://github.com/CartagoGit",
+	"license": "MIT",
+	"scripts": {
+        "ng": "ng",
+        "start": "ng serve --port 7000 --host 0.0.0.0",
+        "build": "ng build",
+        "watch": "ng build --watch --configuration development",
+        "test": "ng test",
+        "lint": "ng lint",
+        "get:versions": "ng version &&  echo Node: && node --version && echo Npm: && npm --version && echo bun: && bun --version && echo Fast Node Version: && fnm --version",
+        "get:app:version": "echo $(bun --print \"require('./package.json').version\")",
+        "bun:reinstall": "rm -rf .angular && rm -rf node_modules && rm -f package-lock.json && rm -f bun.lockb && bun install --force",
+        "add:envs": "set -a && source ./environments/.env && set +a && bash -c",
+        "docker:exec": "npm run add:envs 'docker exec -it ${DOCKER_CONTAINER} /bin/zsh || true'",
+        "docker:create:image": "npm run add:envs 'docker build -t ${DOCKER_IMAGE} -f docker/Dockerfile docker/'",
+        "docker:create:container": "npm run add:envs 'docker run --rm -it --name ${DOCKER_CONTAINER} ${DOCKER_IMAGE}'",
+        "docker:compose": "docker compose --env-file './environments/.env' -f './docker/docker-compose.yml'",
+        "docker:up": "npm run docker:compose -- up",
+        "docker:down": "npm run docker:compose -- down",
+        "docker:stop": "npm run docker:compose -- stop",
+        "docker:restart": "npm run docker:init && npm run docker:remove && npm run docker:up -- --build",
+        "docker:base": "npm run docker:restart -- -d base && npm run docker:exec && npm run docker:stop",
+        "docker:serve": "npm run docker:restart serve && npm run docker:stop",
+        "docker:bundle": "npm run docker:restart bundle && npm run docker:stop",
+        "docker:remove": "npm run add:envs 'docker stop ${DOCKER_CONTAINER} || true && docker rm ${DOCKER_CONTAINER} || true'"
+    },
+	"private": true,
+	"dependencies": {},
+	"devDependencies": {},
+	"description": "To get the price to buy my home",
+	"buildTarget": [
+		"last 3 Chrome versions",
+		"node >= 22.0.0"
+	]
+}

@@ -1,0 +1,29 @@
+name: ${PROJECT}
+
+networks:
+    default:
+        name: ${PROJECT}-network
+
+services:
+    # Servicio del que extienden los demás que contiene la configuración común
+    base: &base
+        privileged: true
+        image: ${DOCKER_IMAGE}
+        container_name: ${DOCKER_CONTAINER}
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                - PROJECT_FOLDER=${PROJECT_FOLDER}
+        user: 1000:1000
+        volumes:
+            - ../:${PROJECT_FOLDER}
+            - /dev/bus/usb:/dev/bus/usb
+        ports:
+            - '${DOCKER_PORT}:${DOCKER_PORT}'
+        environment:
+            - IS_INTO_CONTAINER=true
+    # Servicio de desarrollo
+    serve:
+        <<: *base
+        command: ['bun i && bun run start']
